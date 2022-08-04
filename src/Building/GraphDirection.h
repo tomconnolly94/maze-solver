@@ -18,8 +18,8 @@ GraphDirection GetOppositeDirection( GraphDirection direction ) {
     case Left:
         return Right;
     case Right:
+    default:
         return Left;
-
    }
 }
 

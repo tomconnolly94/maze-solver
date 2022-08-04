@@ -6,6 +6,8 @@
 #include <map>
 #include <tuple>
 
+#include <GraphDirection.h>
+
 class GraphNode {
 private:
     std::map<GraphDirection, GraphNode*> nodeMap;

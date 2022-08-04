@@ -45,9 +45,10 @@ GraphNode* GraphBuilder::BuildGraph()
             newNode->SetNode(GetOppositeDirection(currentDirection), lastParentNode);
             lastParentNode->SetNode(currentDirection, newNode);
             lastParentNode = newNode;
-            
+
         }
     }
+    return startNode;
 
 
     //nodesUnderConsideration.push_back(new GraphNode(startNode, nullptr, nullptr, nullptr, std::tuple<int, int>(0, columnIndex)));
@@ -66,6 +67,7 @@ std::tuple<int, int> GraphBuilder::GetNewPosition(std::tuple<int, int> position,
     case Left:
         return std::tuple<int,int>{std::get<0>(position), std::get<1>(position) - 1};
         break;
+    default:
     case Right:
         return std::tuple<int,int>{std::get<0>(position), std::get<1>(position) + 1};
     }
