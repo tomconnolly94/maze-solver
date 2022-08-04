@@ -1,3 +1,0 @@
-/home/tom/projects/maze-solver/CMakeFiles/rebuild_cache.dir
-/home/tom/projects/maze-solver/CMakeFiles/edit_cache.dir
-/home/tom/projects/maze-solver/CMakeFiles/MazeSolver.dir
