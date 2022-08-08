@@ -11,16 +11,17 @@
 class GraphNode {
 private:
     std::map<GraphDirection, GraphNode*> nodeMap;
-    std::tuple <int, int> Position;
 public:
+    std::pair <int, int> Position;
+
     GraphNode(
         GraphNode* upNode, 
         GraphNode* downNode, 
         GraphNode* leftNode, 
         GraphNode* rightNode,
-        std::tuple <int, int> position);
+        std::pair <int, int> position);
     GraphNode(
-        std::tuple <int, int> position);
+        std::pair <int, int> position);
     void SetNode(GraphDirection direction, GraphNode* graphNode);
 };
 

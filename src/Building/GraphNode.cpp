@@ -4,7 +4,7 @@
 #include <GraphDirection.h>
 
 
-GraphNode::GraphNode(GraphNode* upNode, GraphNode* downNode, GraphNode* leftNode, GraphNode* rightNode, std::tuple<int, int> position){
+GraphNode::GraphNode(GraphNode* upNode, GraphNode* downNode, GraphNode* leftNode, GraphNode* rightNode, std::pair<int, int> position){
     nodeMap = std::map<GraphDirection, GraphNode*>{
         {Up, upNode},
         {Down, downNode},
@@ -14,7 +14,7 @@ GraphNode::GraphNode(GraphNode* upNode, GraphNode* downNode, GraphNode* leftNode
     Position = position;
 }
 
-GraphNode::GraphNode(std::tuple<int, int> position){
+GraphNode::GraphNode(std::pair<int, int> position){
     nodeMap = std::map<GraphDirection, GraphNode*>{
         {Up, nullptr},
         {Down, nullptr},

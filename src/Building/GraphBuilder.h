@@ -16,7 +16,9 @@ public:
     GraphBuilder(std::vector<std::vector<bool>> pixelMaze);
     GraphNode* BuildGraph();
 private:
-    std::tuple<int, int> GetNewPosition(std::tuple<int, int> position, GraphDirection movementDirection);
+    std::pair<int, int> GetNewPosition(std::pair<int, int> position, GraphDirection movementDirection);
+    GraphNode* GetStartNode();
+    std::map<GraphDirection, GraphNode*> EvaluateNodeConnections(const int& rowIndex, const int& columnIndex);
 };
 
 #endif
