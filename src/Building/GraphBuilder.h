@@ -6,7 +6,7 @@
 #include <map>
 
 #include <GraphNode.h>
-#include <GraphDirection.h>
+#include <GraphPosition.h>
 
 class GraphBuilder {
 private:
@@ -16,9 +16,9 @@ public:
     GraphBuilder(std::vector<std::vector<bool>> pixelMaze);
     GraphNode* BuildGraph();
 private:
-    std::pair<int, int> GetNewPosition(std::pair<int, int> position, GraphDirection movementDirection);
+    GraphPosition GetNewPosition(GraphPosition position, GraphDirection movementDirection);
     GraphNode* GetStartNode();
-    std::map<GraphDirection, GraphNode*> EvaluateNodeConnections(const int& rowIndex, const int& columnIndex);
+    std::map<GraphDirection, GraphPosition> EvaluatePositionConnections(const int& rowIndex, const int& columnIndex, GraphDirection entryDirection);
 };
 
 #endif

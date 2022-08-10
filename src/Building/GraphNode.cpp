@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include <GraphNode.h>
-#include <GraphDirection.h>
 
 
 GraphNode::GraphNode(GraphNode* upNode, GraphNode* downNode, GraphNode* leftNode, GraphNode* rightNode, std::pair<int, int> position){

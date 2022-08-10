@@ -7,21 +7,22 @@
 #include <tuple>
 
 #include <GraphDirection.h>
+#include <GraphPosition.h>
 
 class GraphNode {
 private:
     std::map<GraphDirection, GraphNode*> nodeMap;
 public:
-    std::pair <int, int> Position;
+    GraphPosition Position;
 
     GraphNode(
         GraphNode* upNode, 
         GraphNode* downNode, 
         GraphNode* leftNode, 
         GraphNode* rightNode,
-        std::pair <int, int> position);
+        GraphPosition position);
     GraphNode(
-        std::pair <int, int> position);
+        GraphPosition position);
     void SetNode(GraphDirection direction, GraphNode* graphNode);
 };
 

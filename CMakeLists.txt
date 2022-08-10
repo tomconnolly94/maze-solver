@@ -19,6 +19,7 @@ project( MazeSolver )
 include(CMakePrintHelpers)
 
 # include opencv
+set("OpenCV_DIR" "/usr/lib/x86_64-linux-gnu/cmake/opencv4")
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
