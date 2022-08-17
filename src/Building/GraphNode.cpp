@@ -27,3 +27,8 @@ void GraphNode::SetNode(GraphDirection direction, GraphNode* graphNode)
 {
     nodeMap[direction] = graphNode;
 }
+
+GraphNode* GraphNode::GetNode(GraphDirection direction)
+{
+    return nodeMap[direction];
+}

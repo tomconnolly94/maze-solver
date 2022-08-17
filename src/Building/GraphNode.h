@@ -11,8 +11,10 @@
 
 class GraphNode {
 private:
+    // members
     std::map<GraphDirection, GraphNode*> nodeMap;
 public:
+    // members
     GraphPosition Position;
 
     GraphNode(
@@ -23,7 +25,10 @@ public:
         GraphPosition position);
     GraphNode(
         GraphPosition position);
+
+    // functions
     void SetNode(GraphDirection direction, GraphNode* graphNode);
+    GraphNode* GetNode(GraphDirection direction);
 };
 
 #endif

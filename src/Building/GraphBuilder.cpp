@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 
 #include <GraphBuilder.h>
 
@@ -17,28 +18,13 @@ GraphBuilder::GraphBuilder(std::vector<std::vector<bool>> pixelMaze)
 }
 
 
-GraphNode* GraphBuilder::GetStartNode()
-{
-    int rowIndex = 0;
-    int columnIndex = 0;
-
-    // find the first node
-    for(int columnIndex = 0; columnIndex < PixelMaze[rowIndex].size(); ++columnIndex)
-    {
-        if(PixelMaze[rowIndex][columnIndex] == true)
-            return new GraphNode(std::pair<int, int>(columnIndex, rowIndex));
-    }
-}
-
-
-std::map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnections(const int& rowIndex, const int& columnIndex, GraphDirection entryDirection)
+std::map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnections(const int& rowIndex, const int& columnIndex)
 {
     std::map<GraphDirection, GraphPosition> directionMap{};
     GraphPosition graphRootPosition{rowIndex, columnIndex};
 
     for ( int graphDirectionIndex = Up; graphDirectionIndex != Right; ++graphDirectionIndex )
     {
-        if(graphDirectionIndex == entryDirection) continue; // skip the entry direction
         GraphDirection graphDirection = static_cast<GraphDirection>(graphDirectionIndex);
         int positionValue = PixelMaze[rowIndex][columnIndex];
         GraphPosition graphPosition = GetNewPosition(graphRootPosition, graphDirection);
@@ -52,88 +38,118 @@ std::map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnection
     return directionMap;
 }
 
+bool GraphBuilder::NodeConnectionsIndicateNode(std::map<GraphDirection, GraphPosition> nodeConnections)
+{
+    if(nodeConnections.size() > 2) return true;
+    if(nodeConnections.size() < 2) return false;
+
+    // if up and down are both present or left and right are both present, position is not a node
+    if((nodeConnections.find(Up) != nodeConnections.end() && nodeConnections.find(Down) != nodeConnections.end()) ||
+        (nodeConnections.find(Left) != nodeConnections.end() && nodeConnections.find(Right) != nodeConnections.end()))
+        return false;
+    return true;
+}
+
+GraphNode* GraphBuilder::GetGraphNodeByPosition(GraphPosition graphPosition)
+{
+    for(auto graphNode : graphNodes)
+    {
+        if(graphNode->Position.first == graphPosition.first && 
+            graphNode->Position.second == graphPosition.second)
+            return graphNode;
+    }
+    return nullptr;
+}
+
+
+GraphNode* GraphBuilder::FindExistingConnectingNodeInDirection(GraphPosition graphPosition, GraphDirection direction)
+{
+    GraphPosition positionUnderEvaluation = graphPosition;
+    GraphPosition previousPositionUnderEvaluation = graphPosition;
+
+    while(true)
+    {
+        positionUnderEvaluation = GetNewPosition(positionUnderEvaluation, (GraphDirection) direction);
+
+        // if the positionUnderEvaluation is not a path
+        if(PixelMaze[positionUnderEvaluation.first][positionUnderEvaluation.second] == 0)
+            return nullptr;
+        GraphNode* graphNode = GetGraphNodeByPosition(positionUnderEvaluation);
+        if(graphNode != nullptr)
+            return graphNode;
+    }
+}
+
 
 GraphNode* GraphBuilder::BuildGraph()
 {
-    GraphNode* startNode = GetStartNode();
-    GraphNode* lastParentNode;
-    std::vector<PositionUnderEvaluation> nodesUnderConsideration{};
+    GraphNode* startNode;
     int columnIndex = 0;
     int rowIndex = 0;
 
-    bool travelling = true;
-    GraphDirection currentDirection = Down;
-
-
-    GraphPosition positionUnderEvaluation = GraphPosition(startNode->Position.first, startNode->Position.second);
-
-    std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(positionUnderEvaluation.first, positionUnderEvaluation.second, currentDirection);
-
-    // if currentDirection is not found in nodeConnections or there are multiple node 
-    // connections then the current position is a node
-    if(nodeConnections.find(currentDirection) == nodeConnections.end() || nodeConnections.size() > 1)
+    // loop through the matrix to find node positions
+    for(int x = 0; x < PixelMaze.size(); ++x)
     {
-        GraphNode* graphNode = new GraphNode(GraphPosition(positionUnderEvaluation.first, positionUnderEvaluation.second));
-        graphNode->SetNode(GetOppositeDirection(currentDirection), lastParentNode);
-        lastParentNode->SetNode(currentDirection, graphNode);
-    }
-
-
-    for (const std::pair<GraphDirection, GraphPosition>& directionNodePair : nodeConnections)
-    {
-        PositionUnderEvaluation positionUnderEvaluation;
-        positionUnderEvaluation.entryDirection = directionNodePair.first;
-        positionUnderEvaluation.graphPosition = directionNodePair.second;
-        
-        nodesUnderConsideration.push_back(positionUnderEvaluation);
-
-        
-    }
-
-
-
-
-
-    while(travelling)
-    {
-        GraphPosition oldPosition = std::pair<int, int>{columnIndex, rowIndex};
-        GraphPosition newPosition = GetNewPosition(GraphPosition{columnIndex, rowIndex}, currentDirection);
-
-        if(PixelMaze[newPosition.first][newPosition.second] == true)
+        for(int y = 0; y < PixelMaze[x].size(); ++y)
         {
-            continue;
-        }
-        else
-        {
-            // lastPosition is a node
-            GraphNode* newNode = new GraphNode(newPosition);
-            newNode->SetNode(GetOppositeDirection(currentDirection), lastParentNode);
-            lastParentNode->SetNode(currentDirection, newNode);
-            lastParentNode = newNode;
+            GraphPosition positionUnderEvaluation{x,y};
 
+            std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(positionUnderEvaluation.first, positionUnderEvaluation.second);
+            
+            // if currentDirection is not found in nodeConnections or there are multiple node 
+            // connections then the current position is a node
+            if(NodeConnectionsIndicateNode(nodeConnections))
+            {
+                GraphNode* graphNode = new GraphNode(positionUnderEvaluation);
+                if(startNode == nullptr) startNode = graphNode;
+                graphNodes.push_back(graphNode);
+                
+                for ( int direction = Up; direction != Right; ++direction )
+                {
+                    GraphDirection graphDirection = (GraphDirection) direction;
+                    GraphNode* existingConnectedGraphNode = FindExistingConnectingNodeInDirection(graphNode->Position, graphDirection);
+
+                    if(existingConnectedGraphNode != nullptr)
+                    {
+                        graphNode->SetNode(graphDirection, existingConnectedGraphNode);
+                        existingConnectedGraphNode->SetNode(GetOppositeDirection(graphDirection), graphNode);
+                    }
+                }
+            }
         }
     }
     return startNode;
-
-
-    //nodesUnderConsideration.push_back(new GraphNode(startNode, nullptr, nullptr, nullptr, std::tuple<int, int>(0, columnIndex)));
 }
 
 GraphPosition GraphBuilder::GetNewPosition(GraphPosition position, GraphDirection movementDirection)
 {
+    GraphPosition graphPosition;
     switch (movementDirection)
     {
     case Up:
-        return GraphPosition{position.first - 1, position.second};
-        break;
+        graphPosition = GraphPosition{position.first - 1, position.second};
+        if(graphPosition.first < 0)
+            break;
+        return graphPosition;
     case Down:
-        return GraphPosition{position.first + 1, position.second};
-        break;
+        graphPosition = GraphPosition{position.first + 1, position.second};
+        if(graphPosition.first == PixelMaze[0].size())
+            break;
+        return graphPosition;
     case Left:
-        return GraphPosition{position.first, position.second - 1};
-        break;
+        graphPosition = GraphPosition{position.first, position.second - 1};
+        if(graphPosition.second < 0)
+            break;
+        return graphPosition;
     default:
     case Right:
-        return GraphPosition{position.first, position.second + 1};
+        graphPosition = GraphPosition{position.first, position.second + 1};
+        if(graphPosition.second == PixelMaze.size())
+            break;
+        return graphPosition;
     }
+
+    std::stringstream errorString;
+    errorString << "GetNewPosition has invalid new position. x: " << graphPosition.first << ", y: " << graphPosition.second;
+    throw std::invalid_argument(errorString.str());
 }

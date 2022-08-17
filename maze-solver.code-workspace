@@ -68,5 +68,31 @@
 			"stop_token": "cpp",
 			"thread": "cpp"
 		}
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "g++ build and debug active file",
+				"type": "cppdbg",
+				"request": "launch",
+				"program": "${workspaceFolder}/MazeSolver",
+				"args": [],
+				"stopAtEntry": false,
+				"cwd": "${workspaceFolder}",
+				"environment": [],
+				"externalConsole": false,
+				"MIMode": "gdb",
+				"setupCommands": [
+				  {
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				  }
+				],
+				"preLaunchTask": "pre-build",
+				"miDebuggerPath": "/usr/bin/gdb"
+			}
+		]
 	}
 }
