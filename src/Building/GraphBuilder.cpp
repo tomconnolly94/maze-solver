@@ -54,8 +54,8 @@ GraphNode* GraphBuilder::GetGraphNodeByPosition(GraphPosition graphPosition)
 {
     for(auto graphNode : graphNodes)
     {
-        if(graphNode->Position.first == graphPosition.first && 
-            graphNode->Position.second == graphPosition.second)
+        if(graphNode->GetPosition().first == graphPosition.first && 
+            graphNode->GetPosition().second == graphPosition.second)
             return graphNode;
     }
     return nullptr;
@@ -107,11 +107,11 @@ GraphNode* GraphBuilder::BuildGraph()
                 for ( int direction = Up; direction != Right; ++direction )
                 {
                     GraphDirection graphDirection = (GraphDirection) direction;
-                    GraphNode* existingConnectedGraphNode = FindExistingConnectingNodeInDirection(graphNode->Position, graphDirection);
+                    GraphNode* existingConnectedGraphNode = FindExistingConnectingNodeInDirection(graphNode->GetPosition(), graphDirection);
 
                     if(existingConnectedGraphNode != nullptr)
                     {
-                        graphNode->SetNode(graphDirection, existingConnectedGraphNode);
+                        graphNode->AddConnection(graphDirection, existingConnectedGraphNode);
                         existingConnectedGraphNode->SetNode(GetOppositeDirection(graphDirection), graphNode);
                     }
                 }
@@ -152,4 +152,50 @@ GraphPosition GraphBuilder::GetNewPosition(GraphPosition position, GraphDirectio
     std::stringstream errorString;
     errorString << "GetNewPosition has invalid new position. x: " << graphPosition.first << ", y: " << graphPosition.second;
     throw std::invalid_argument(errorString.str());
+}
+
+
+void GraphBuilder::CreateNewGraphNode(GraphNode* parentNode, const GraphPosition& graphNodePosition, const int& distanceFromParent)
+{
+    GraphNode* graphNode = new GraphNode(graphNodePosition);
+
+    graphNodes.push_back(graphNode);
+    GraphConnection* graphConnection = new GraphConnection(distanceFromParent);
+
+    graphNode->AddConnection(graphConnection);
+    parentNode->AddConnection(graphConnection);
+
+    graphNodesToBeEvaluated[graphNode] = 1;
+
+    graphNodesToBeEvaluated[parentNode]--;
+    if(graphNodesToBeEvaluated[parentNode] == 0)
+        graphNodesToBeEvaluated.erase(parentNode);
+}
+
+
+void GraphBuilder::EvaluateGraphNodeConnections(GraphNode* graphNode)
+{
+    GraphPosition graphPosition = graphNode->GetPosition();
+    std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(graphPosition.first, graphPosition.second);
+
+    graphNodesToBeEvaluated[graphNode] = nodeConnections.size();
+
+    auto nodeConnection = nodeConnections.begin();
+    while (nodeConnection != nodeConnections.end()) 
+    {
+        GraphDirection graphDirection = nodeConnection->first;
+        GraphPosition graphPosition = nodeConnection->second;
+
+        TraverseForNewGraphNode(graphPosition, graphDirection);
+
+
+        ++nodeConnection;
+    }
+}
+
+void GraphBuilder::TraverseForNewGraphNode(const GraphPosition& graphPosition, const GraphDirection& graphDirection)
+{
+    GraphPosition newPosition = GetNewPosition(graphPosition, graphDirection);
+
+
 }

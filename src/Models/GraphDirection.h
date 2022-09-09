@@ -9,5 +9,6 @@ enum GraphDirection{
 };
 
 GraphDirection GetOppositeDirection(GraphDirection direction);
+std::vector<GraphDirection> GetPerpendicularDirections(GraphDirection direction);
 
 #endif

@@ -14,6 +14,7 @@ private:
     std::vector<std::vector<bool>> PixelMaze;
     std::map<GraphDirection, signed> directionMap;
     std::vector<GraphNode*> graphNodes;
+    std::map<GraphNode*, int> graphNodesToBeEvaluated;
 
     // functions
     GraphNode* FindExistingConnectingNodeInDirection(GraphPosition graphPosition, GraphDirection direction);
@@ -22,6 +23,12 @@ private:
     GraphNode* GetStartNode();
     std::map<GraphDirection, GraphPosition> EvaluatePositionConnections(const int& rowIndex, const int& columnIndex);
     bool NodeConnectionsIndicateNode(std::map<GraphDirection, GraphPosition> nodeConnections);
+    
+    
+    void CreateNewGraphNode(GraphNode* parentNode, const GraphPosition& graphNodePosition, const int& distanceFromParent);
+    void EvaluateGraphNodeConnections(GraphNode* graphNode);
+    void TraverseForNewGraphNode(const GraphPosition& graphPosition, const GraphDirection& graphDirection);
+
 public:
     GraphBuilder(std::vector<std::vector<bool>> pixelMaze);
     GraphNode* BuildGraph();
