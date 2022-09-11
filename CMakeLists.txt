@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
+set(CMAKE_CXX_STANDARD 14)
 
 # macro to list sub directories of a given directory
 MACRO(SUBDIRLIST result curdir)
@@ -33,3 +34,38 @@ FILE(GLOB cpp_files src/*.cpp src/*/*.cpp) # for source
 # compile and link
 add_executable( MazeSolver ${cpp_files} )
 target_link_libraries( MazeSolver ${OpenCV_LIBS} )
+
+#################
+# testing config
+#################
+
+
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    include(CMakePrintHelpers)
+
+    cmake_print_variables("hello")
+
+    include(FetchContent)
+    FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
+    enable_testing()
+
+    add_executable(
+        hello_test
+        test/hello_test.cc
+    )
+    target_link_libraries(
+        hello_test
+        GTest::gtest_main
+    )
+
+    include(GoogleTest)
+    gtest_discover_tests(hello_test)
+endif()

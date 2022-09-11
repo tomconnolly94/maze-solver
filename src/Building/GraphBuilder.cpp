@@ -100,7 +100,7 @@ GraphNode* GraphBuilder::BuildGraph()
             // connections then the current position is a node
             if(NodeConnectionsIndicateNode(nodeConnections))
             {
-                GraphNode* graphNode = new GraphNode(positionUnderEvaluation);
+                GraphNode* graphNode = new GraphNode(positionUnderEvaluation, Up);
                 if(startNode == nullptr) startNode = graphNode;
                 graphNodes.push_back(graphNode);
                 
@@ -111,8 +111,8 @@ GraphNode* GraphBuilder::BuildGraph()
 
                     if(existingConnectedGraphNode != nullptr)
                     {
-                        graphNode->AddConnection(graphDirection, existingConnectedGraphNode);
-                        existingConnectedGraphNode->SetNode(GetOppositeDirection(graphDirection), graphNode);
+                        // graphNode->AddConnection(graphDirection, existingConnectedGraphNode);
+                        // existingConnectedGraphNode->SetNode(GetOppositeDirection(graphDirection), graphNode);
                     }
                 }
             }
@@ -155,9 +155,9 @@ GraphPosition GraphBuilder::GetNewPosition(GraphPosition position, GraphDirectio
 }
 
 
-void GraphBuilder::CreateNewGraphNode(GraphNode* parentNode, const GraphPosition& graphNodePosition, const int& distanceFromParent)
+void GraphBuilder::CreateNewGraphNode(GraphNode* parentNode, const GraphPosition& graphNodePosition, const int& distanceFromParent, const GraphDirection& directionOfParent)
 {
-    GraphNode* graphNode = new GraphNode(graphNodePosition);
+    GraphNode* graphNode = new GraphNode(graphNodePosition, directionOfParent);
 
     graphNodes.push_back(graphNode);
     GraphConnection* graphConnection = new GraphConnection(distanceFromParent);
@@ -184,18 +184,47 @@ void GraphBuilder::EvaluateGraphNodeConnections(GraphNode* graphNode)
     while (nodeConnection != nodeConnections.end()) 
     {
         GraphDirection graphDirection = nodeConnection->first;
-        GraphPosition graphPosition = nodeConnection->second;
 
-        TraverseForNewGraphNode(graphPosition, graphDirection);
-
+        //skip the direction of the node parent
+        if(graphDirection == graphNode->GetDirectionOfParent()) continue;
+        TraverseForNewGraphNode(*graphNode, graphDirection);
 
         ++nodeConnection;
     }
 }
 
-void GraphBuilder::TraverseForNewGraphNode(const GraphPosition& graphPosition, const GraphDirection& graphDirection)
+void GraphBuilder::TraverseForNewGraphNode(GraphNode& rootGraphNode, const GraphDirection& graphDirection)
 {
-    GraphPosition newPosition = GetNewPosition(graphPosition, graphDirection);
+    GraphPosition positionForEvaluation = rootGraphNode.GetPosition();
+    int stepsTakenFromParent = 0;
 
+    while(true)
+    {
+        positionForEvaluation = GetNewPosition(positionForEvaluation, graphDirection);
+        ++stepsTakenFromParent;
+
+        //evaluate surrounding locations
+        std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(positionForEvaluation.first, positionForEvaluation.second);
+
+        // this position is a node if the next position for evaluation is not a valid path
+        if(nodeConnections.find(graphDirection) == nodeConnections.end())
+        {
+            CreateNewGraphNode(&rootGraphNode, positionForEvaluation, stepsTakenFromParent, GetOppositeDirection(graphDirection));
+            return;
+        }
+
+        std::vector<GraphDirection> perpendicularDirections = GetPerpendicularDirections(graphDirection);
+
+        // this position is a node if there are perpendicular connections
+        for (const GraphDirection& perpendicularDirection : perpendicularDirections)
+        {
+            if(nodeConnections.find(perpendicularDirection) != nodeConnections.end())
+            {
+                CreateNewGraphNode(&rootGraphNode, positionForEvaluation, stepsTakenFromParent, GetOppositeDirection(graphDirection));
+                return;
+            }
+        }
+    }
+    
 
 }

@@ -25,9 +25,9 @@ private:
     bool NodeConnectionsIndicateNode(std::map<GraphDirection, GraphPosition> nodeConnections);
     
     
-    void CreateNewGraphNode(GraphNode* parentNode, const GraphPosition& graphNodePosition, const int& distanceFromParent);
+    void CreateNewGraphNode(GraphNode* parentNode, const GraphPosition& graphNodePosition, const int& distanceFromParent, const GraphDirection& directionOfParent);
     void EvaluateGraphNodeConnections(GraphNode* graphNode);
-    void TraverseForNewGraphNode(const GraphPosition& graphPosition, const GraphDirection& graphDirection);
+    void TraverseForNewGraphNode(GraphNode& rootGraphNode, const GraphDirection& graphDirection);
 
 public:
     GraphBuilder(std::vector<std::vector<bool>> pixelMaze);
