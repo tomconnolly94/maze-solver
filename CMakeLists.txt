@@ -13,6 +13,8 @@ MACRO(SUBDIRLIST result curdir)
     SET(${result} ${dirlist})
 ENDMACRO()
 
+
+
 # declare project
 project( MazeSolver )
 
@@ -35,6 +37,8 @@ FILE(GLOB cpp_files src/*.cpp src/*/*.cpp) # for source
 add_executable( MazeSolver ${cpp_files} )
 target_link_libraries( MazeSolver ${OpenCV_LIBS} )
 
+
+
 #################
 # testing config
 #################
@@ -43,29 +47,42 @@ target_link_libraries( MazeSolver ${OpenCV_LIBS} )
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     include(CMakePrintHelpers)
 
-    cmake_print_variables("hello")
-
     include(FetchContent)
     FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG release-1.12.1
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG release-1.12.1
     )
     # For Windows: Prevent overriding the parent project's compiler/linker settings
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
 
     enable_testing()
+    # find_package(GTest REQUIRED)
+    include(GoogleTest)
+
+    FILE(GLOB cpp_test_files 
+        test/TestGraphBuilder.cc 
+        src/Building/GraphBuilder.cpp
+        src/Models/GraphNode.cpp
+        src/Models/GraphPosition.cpp
+        src/Models/GraphDirection.cpp
+        src/Models/GraphConnection.cpp
+    ) # for source
 
     add_executable(
-        hello_test
-        test/hello_test.cc
-    )
-    target_link_libraries(
-        hello_test
-        GTest::gtest_main
+        MazeSolverTest
+        ${cpp_test_files}
+        # ${cpp_files}
     )
 
-    include(GoogleTest)
-    gtest_discover_tests(hello_test)
+    target_link_libraries(
+        MazeSolverTest
+        GTest::gtest_main
+        # ${OpenCV_LIBS}
+    )
+    # target_link_libraries(MazeSolverTest GTest::GTest GTest::Main)
+
+    gtest_discover_tests(MazeSolverTest)
+    
 endif()

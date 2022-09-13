@@ -27,3 +27,7 @@ This README would normally document whatever steps are necessary to get your app
 
 * Repo owner or admin
 * Other community or team contact
+
+### Google test
+
+* handy docs - https://google.github.io/googletest/samples.html
