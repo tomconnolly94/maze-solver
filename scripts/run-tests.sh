@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./build-debug.sh
+./build-tests.sh
 cd ../build
 ctest
 cd -

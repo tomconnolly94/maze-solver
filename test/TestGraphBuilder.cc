@@ -3,7 +3,9 @@
 #include "GraphBuilder.h"
 //#include <BaseTest.cc>
 
-namespace BuildingTesting
+#ifdef UNIT_TEST
+
+namespace Building
 {
 	class TestGraphBuilder : public testing::Test
 	{
@@ -42,3 +44,4 @@ namespace BuildingTesting
 		EXPECT_EQ(1, GetGraphNodes().size());
 	}
 }
+#endif

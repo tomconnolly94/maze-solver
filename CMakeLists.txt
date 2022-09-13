@@ -44,7 +44,7 @@ target_link_libraries( MazeSolver ${OpenCV_LIBS} )
 #################
 
 
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+if("${UNIT_TEST}" STREQUAL "true")
     include(CMakePrintHelpers)
 
     include(FetchContent)
@@ -56,6 +56,9 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     # For Windows: Prevent overriding the parent project's compiler/linker settings
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
+
+
+
 
     enable_testing()
     # find_package(GTest REQUIRED)
@@ -75,6 +78,8 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
         ${cpp_test_files}
         # ${cpp_files}
     )
+
+    target_compile_definitions(MazeSolverTest PRIVATE UNIT_TEST)
 
     target_link_libraries(
         MazeSolverTest

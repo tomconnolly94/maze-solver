@@ -13,8 +13,12 @@ namespace Building {
     class GraphBuilder {
 
     private:
-        //friend class BuildingTesting::TestGraphBuilder;
-    public:
+        #ifdef UNIT_TEST
+            // code to expose this classes private members in a unit test environment
+            #include "gtest/gtest_prod.h"
+            friend class TestGraphBuilder;
+            FRIEND_TEST(TestGraphBuilder, TestCreateNewGraphNode);
+        #endif
         std::vector<std::vector<bool>> PixelMaze;
         std::map<GraphDirection, signed> directionMap;
         std::map<GraphNode*, int> graphNodesToBeEvaluated;
