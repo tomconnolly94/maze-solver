@@ -45,7 +45,6 @@ target_link_libraries( MazeSolver ${OpenCV_LIBS} )
 
 
 if("${UNIT_TEST}" STREQUAL "true")
-    include(CMakePrintHelpers)
 
     include(FetchContent)
     FetchContent_Declare(
@@ -57,15 +56,13 @@ if("${UNIT_TEST}" STREQUAL "true")
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
 
-
-
-
     enable_testing()
     # find_package(GTest REQUIRED)
     include(GoogleTest)
 
     FILE(GLOB cpp_test_files 
-        test/TestGraphBuilder.cc 
+        test/BaseTest.cc
+        test/TestGraphBuilder.cc
         src/Building/GraphBuilder.cpp
         src/Models/GraphNode.cpp
         src/Models/GraphPosition.cpp
@@ -86,7 +83,6 @@ if("${UNIT_TEST}" STREQUAL "true")
         GTest::gtest_main
         # ${OpenCV_LIBS}
     )
-    # target_link_libraries(MazeSolverTest GTest::GTest GTest::Main)
 
     gtest_discover_tests(MazeSolverTest)
     

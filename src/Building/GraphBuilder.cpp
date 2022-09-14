@@ -24,22 +24,25 @@ namespace Building {
     }
 
 
-    std::map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnections(const int& rowIndex, const int& columnIndex)
+    std::map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnections(const int& xPosition, const int& yPosition)
     {
         std::map<GraphDirection, GraphPosition> directionMap{};
-        GraphPosition graphRootPosition{rowIndex, columnIndex};
+        GraphPosition graphRootPosition{xPosition, yPosition};
 
         for ( int graphDirectionIndex = Up; graphDirectionIndex != Right; ++graphDirectionIndex )
         {
             GraphDirection graphDirection = static_cast<GraphDirection>(graphDirectionIndex);
-            int positionValue = PixelMaze[rowIndex][columnIndex];
-            GraphPosition graphPosition = GetNewPosition(graphRootPosition, graphDirection);
-
-            if(positionValue == 1)
-            {
-                directionMap[graphDirection] = graphPosition;
+            GraphPosition graphPosition;
+            try{
+                graphPosition = GetNewPosition(graphRootPosition, graphDirection);
             }
-        
+            catch (const std::invalid_argument& exception){
+                std::cerr << exception.what() << std::endl;
+                continue;
+            }
+
+            if(PixelMaze[graphPosition.second][graphPosition.first])
+                directionMap[graphDirection] = graphPosition;        
         }
         return directionMap;
     }
@@ -133,24 +136,24 @@ namespace Building {
         switch (movementDirection)
         {
         case Up:
-            graphPosition = GraphPosition{position.first - 1, position.second};
-            if(graphPosition.first < 0)
-                break;
-            return graphPosition;
-        case Down:
-            graphPosition = GraphPosition{position.first + 1, position.second};
-            if(graphPosition.first == PixelMaze[0].size())
-                break;
-            return graphPosition;
-        case Left:
             graphPosition = GraphPosition{position.first, position.second - 1};
             if(graphPosition.second < 0)
                 break;
             return graphPosition;
+        case Down:
+            graphPosition = GraphPosition{position.first, position.second + 1};
+            if(graphPosition.second == PixelMaze[0].size())
+                break;
+            return graphPosition;
+        case Left:
+            graphPosition = GraphPosition{position.first - 1, position.second};
+            if(graphPosition.first < 0)
+                break;
+            return graphPosition;
         default:
         case Right:
-            graphPosition = GraphPosition{position.first, position.second + 1};
-            if(graphPosition.second == PixelMaze.size())
+            graphPosition = GraphPosition{position.first + 1, position.second};
+            if(graphPosition.first == PixelMaze.size())
                 break;
             return graphPosition;
         }
@@ -169,11 +172,11 @@ namespace Building {
         GraphConnection* graphConnection = new GraphConnection(distanceFromParent);
 
         graphNode->AddConnection(graphConnection);
-        if(parentNode != nullptr)
-            parentNode->AddConnection(graphConnection);
-
         graphNodesToBeEvaluated[graphNode] = 1;
 
+        if(parentNode == nullptr) return;
+        
+        parentNode->AddConnection(graphConnection);
         graphNodesToBeEvaluated[parentNode]--;
         if(graphNodesToBeEvaluated[parentNode] == 0)
             graphNodesToBeEvaluated.erase(parentNode);
