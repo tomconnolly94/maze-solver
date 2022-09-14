@@ -38,6 +38,7 @@ namespace Building
 	TEST_F(TestGraphBuilder, TestCreateNewGraphNode) {
 
 		EXPECT_EQ(0, GetGraphNodes().size());
+		EXPECT_EQ(0, 1);
 
 		CreateNodeReturnDirections();
 
