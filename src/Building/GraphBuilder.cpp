@@ -5,25 +5,26 @@
 
 namespace Building {
 
-    struct PositionUnderEvaluation
+    /*
+        Constructor for GraphBuilder.
+        @param pixelMaze 2D vector representing the maze for analysis.
+    */
+    GraphBuilder::GraphBuilder(std::vector<std::vector<bool>> pixelMaze) : 
+        graphNodes{},
+        graphNodeEvaluationManager{pixelMaze}
     {
-        GraphDirection entryDirection;
-        GraphPosition graphPosition;
-
-    };
-
-    GraphBuilder::GraphBuilder(std::vector<std::vector<bool>> pixelMaze) : graphNodes{}
-    {
-        PixelMaze = pixelMaze;
+        _pixelMaze = pixelMaze;
         directionMap = {{Up, -1}, {Down, 1}, {Left, -1}, {Right, 1}};
     }
-
-    GraphBuilder::GraphBuilder()
-    {
-        directionMap = {{Up, -1}, {Down, 1}, {Left, -1}, {Right, 1}};
-    }
-
-
+    
+    /*
+        EvaluatePositionConnections takes a pixelMaze position and evaluates its immediate surroundings for positions of that 
+            should be included in the graph, not necessarily as GraphNodes.
+        @test Building::TestGraphBuilder - TestEvaluatePositionConnections
+        @param xPosition position on the x axis.
+        @param yPosition position on the y axis.
+        @return map of each position that can be considered part of the graph with the direction from the input position as the map key.
+    */
     std::map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnections(const int& xPosition, const int& yPosition)
     {
         std::map<GraphDirection, GraphPosition> directionMap{};
@@ -41,95 +42,66 @@ namespace Building {
                 continue;
             }
 
-            if(PixelMaze[graphPosition.second][graphPosition.first])
+            if(_pixelMaze[graphPosition.second][graphPosition.first])
                 directionMap[graphDirection] = graphPosition;        
         }
         return directionMap;
     }
-
-    bool GraphBuilder::NodeConnectionsIndicateNode(std::map<GraphDirection, GraphPosition> nodeConnections)
+    
+    /*
+        ScanPixelMazeForNewGraphNode scans the _pixelMaze from the top right hand corner, and returns when it finds a position it 
+            considers to be a Node.
+        @test Building::TestGraphBuilder - TestScanPixelMazeForNewGraphNode
+        @param xPosition position on the x axis.
+        @param yPosition position on the y axis.
+        @return map of each position that can be considered part of the graph with the direction from the input position as the map key.
+    */
+    bool GraphBuilder::ScanPixelMazeForStartNode()
     {
-        if(nodeConnections.size() > 2) return true;
-        if(nodeConnections.size() < 2) return false;
-
-        // if up and down are both present or left and right are both present, position is not a node
-        if((nodeConnections.find(Up) != nodeConnections.end() && nodeConnections.find(Down) != nodeConnections.end()) ||
-            (nodeConnections.find(Left) != nodeConnections.end() && nodeConnections.find(Right) != nodeConnections.end()))
-            return false;
-        return true;
-    }
-
-    GraphNode* GraphBuilder::GetGraphNodeByPosition(GraphPosition graphPosition)
-    {
-        for(auto graphNode : graphNodes)
+        while(_pixelMazeXPosition < _pixelMaze[0].size())
         {
-            if(graphNode->GetPosition().first == graphPosition.first && 
-                graphNode->GetPosition().second == graphPosition.second)
-                return graphNode;
+            bool pixel = _pixelMaze[0][_pixelMazeXPosition];
+            if(!pixel)
+            {
+                ++_pixelMazeXPosition;
+            }
+            else
+            {
+                GraphPosition GraphPosition{0, _pixelMazeXPosition};
+                CreateNewGraphNode(nullptr, GraphPosition, 0, Up);
+                ++_pixelMazeXPosition;
+                return true;
+            }
         }
-        return nullptr;
+        return false;
     }
 
-
-    GraphNode* GraphBuilder::FindExistingConnectingNodeInDirection(GraphPosition graphPosition, GraphDirection direction)
-    {
-        GraphPosition positionUnderEvaluation = graphPosition;
-        GraphPosition previousPositionUnderEvaluation = graphPosition;
-
-        while(true)
-        {
-            positionUnderEvaluation = GetNewPosition(positionUnderEvaluation, (GraphDirection) direction);
-
-            // if the positionUnderEvaluation is not a path
-            if(PixelMaze[positionUnderEvaluation.first][positionUnderEvaluation.second] == 0)
-                return nullptr;
-            GraphNode* graphNode = GetGraphNodeByPosition(positionUnderEvaluation);
-            if(graphNode != nullptr)
-                return graphNode;
-        }
-    }
-
-
+    /*
+        BuildGraph uses the pixelMaze to populate a list of graphNodes with connections indicating the possible paths in the pixelMaze.
+        @test Building::TestGraphBuilder - TestBuildGraph
+        @return GraphNode* representing the start position.
+    */
     GraphNode* GraphBuilder::BuildGraph()
     {
-        GraphNode* startNode;
-        int columnIndex = 0;
-        int rowIndex = 0;
+        GraphNode* startNode = nullptr;
+        ScanPixelMazeForStartNode();
 
-        // loop through the matrix to find node positions
-        for(int x = 0; x < PixelMaze.size(); ++x)
+        while(graphNodeEvaluationManager.IsNotEmpty())
         {
-            for(int y = 0; y < PixelMaze[x].size(); ++y)
-            {
-                GraphPosition positionUnderEvaluation{x,y};
-
-                std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(positionUnderEvaluation.first, positionUnderEvaluation.second);
-                
-                // if currentDirection is not found in nodeConnections or there are multiple node 
-                // connections then the current position is a node
-                if(NodeConnectionsIndicateNode(nodeConnections))
-                {
-                    GraphNode* graphNode = new GraphNode(positionUnderEvaluation, Up);
-                    if(startNode == nullptr) startNode = graphNode;
-                    graphNodes.push_back(graphNode);
-                    
-                    for ( int direction = Up; direction != Right; ++direction )
-                    {
-                        GraphDirection graphDirection = (GraphDirection) direction;
-                        GraphNode* existingConnectedGraphNode = FindExistingConnectingNodeInDirection(graphNode->GetPosition(), graphDirection);
-
-                        if(existingConnectedGraphNode != nullptr)
-                        {
-                            // graphNode->AddConnection(graphDirection, existingConnectedGraphNode);
-                            // existingConnectedGraphNode->SetNode(GetOppositeDirection(graphDirection), graphNode);
-                        }
-                    }
-                }
-            }
+            GraphNode* graphNodeForEvaluation = graphNodeEvaluationManager.GetNextGraphNodeForEvaluation();
+            if(startNode == nullptr) startNode = graphNodeForEvaluation;
+            EvaluateGraphNodeConnections(graphNodeForEvaluation);
         }
         return startNode;
     }
 
+    /*
+        GetNewPosition takes a position and a direction and returns the new position based on a one step
+            move in that direction on the _pixelMaze. It throws an exception if the direction causes the
+            new position to move off the _pixelMaze.
+        @test Building::TestGraphBuilder - TestGetNewPosition
+        @return GraphPosition representing the new position.
+    */
     GraphPosition GraphBuilder::GetNewPosition(GraphPosition position, GraphDirection movementDirection)
     {
         GraphPosition graphPosition;
@@ -142,7 +114,7 @@ namespace Building {
             return graphPosition;
         case Down:
             graphPosition = GraphPosition{position.first, position.second + 1};
-            if(graphPosition.second == PixelMaze[0].size())
+            if(graphPosition.second == _pixelMaze[0].size())
                 break;
             return graphPosition;
         case Left:
@@ -153,7 +125,7 @@ namespace Building {
         default:
         case Right:
             graphPosition = GraphPosition{position.first + 1, position.second};
-            if(graphPosition.first == PixelMaze.size())
+            if(graphPosition.first == _pixelMaze.size())
                 break;
             return graphPosition;
         }
@@ -164,7 +136,7 @@ namespace Building {
     }
 
 
-    void GraphBuilder::CreateNewGraphNode(GraphNode* parentNode, const GraphPosition& graphNodePosition, const int& distanceFromParent, const GraphDirection& directionOfParent)
+    void GraphBuilder::CreateNewGraphNode(GraphNode* parentNode, const GraphPosition graphNodePosition, const int& distanceFromParent, const GraphDirection& directionOfParent)
     {
         GraphNode* graphNode = new GraphNode(graphNodePosition, directionOfParent);
 
@@ -172,23 +144,19 @@ namespace Building {
         GraphConnection* graphConnection = new GraphConnection(distanceFromParent);
 
         graphNode->AddConnection(graphConnection);
-        graphNodesToBeEvaluated[graphNode] = 1;
+        //graphNodesToBeEvaluated[graphNode] = 1;
+        graphNodeEvaluationManager.AddGraphNode(graphNode);
 
         if(parentNode == nullptr) return;
         
         parentNode->AddConnection(graphConnection);
-        graphNodesToBeEvaluated[parentNode]--;
-        if(graphNodesToBeEvaluated[parentNode] == 0)
-            graphNodesToBeEvaluated.erase(parentNode);
     }
 
 
     void GraphBuilder::EvaluateGraphNodeConnections(GraphNode* graphNode)
     {
         GraphPosition graphPosition = graphNode->GetPosition();
-        std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(graphPosition.first, graphPosition.second);
-
-        graphNodesToBeEvaluated[graphNode] = nodeConnections.size();
+        std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(graphPosition.second, graphPosition.first);
 
         auto nodeConnection = nodeConnections.begin();
         while (nodeConnection != nodeConnections.end()) 

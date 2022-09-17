@@ -68,6 +68,7 @@ if("${UNIT_TEST}" STREQUAL "true")
         src/Models/GraphPosition.cpp
         src/Models/GraphDirection.cpp
         src/Models/GraphConnection.cpp
+        src/Building/GraphNodeEvaluationManager.cpp
     ) # for source
 
     add_executable(
