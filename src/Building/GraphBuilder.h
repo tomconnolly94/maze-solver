@@ -41,7 +41,7 @@ namespace Building {
         bool NodeConnectionsIndicateNode(std::map<GraphDirection, GraphPosition> nodeConnections);
         
 
-        void CreateNewGraphNode(GraphNode* parentNode, const GraphPosition graphNodePosition, const int& distanceFromParent, const GraphDirection& directionOfParent);
+        void CreateNewGraphNode(GraphNode* parentNode, const GraphPosition graphNodePosition, const int distanceFromParent, const GraphDirection directionOfParent);
         void EvaluateGraphNodeConnections(GraphNode* graphNode);
         void TraverseForNewGraphNode(GraphNode& rootGraphNode, const GraphDirection& graphDirection);
         bool ScanPixelMazeForStartNode();

@@ -100,6 +100,8 @@ namespace Building {
             move in that direction on the _pixelMaze. It throws an exception if the direction causes the
             new position to move off the _pixelMaze.
         @test Building::TestGraphBuilder - TestGetNewPosition
+        @param position the starting position to generate the new position from
+        @param movementDirection the direction to move from the position to generate the new position
         @return GraphPosition representing the new position.
     */
     GraphPosition GraphBuilder::GetNewPosition(GraphPosition position, GraphDirection movementDirection)
@@ -135,8 +137,17 @@ namespace Building {
         throw std::invalid_argument(errorString.str());
     }
 
-
-    void GraphBuilder::CreateNewGraphNode(GraphNode* parentNode, const GraphPosition graphNodePosition, const int& distanceFromParent, const GraphDirection& directionOfParent)
+    /*
+        CreateNewGraphNode takes input params and creates a new GraphNode* with a connection to its 
+            parent GraphNode*, adding it to relevant lists for processing later.
+        @test Building::TestGraphBuilder - TestCreateNewGraphNode
+        @param parentNode the starting position to generate the new position from
+        @param graphNodePosition the starting position to generate the new position from
+        @param distanceFromParent the starting position to generate the new position from
+        @param directionOfParent the direction to move from the position to generate the new position
+        @return void
+    */
+    void GraphBuilder::CreateNewGraphNode(GraphNode* parentNode, const GraphPosition graphNodePosition, const int distanceFromParent, const GraphDirection directionOfParent)
     {
         GraphNode* graphNode = new GraphNode(graphNodePosition, directionOfParent);
 
@@ -152,7 +163,13 @@ namespace Building {
         parentNode->AddConnection(graphConnection);
     }
 
-
+    /*
+        EvaluateGraphNodeConnections takes a graphNode and finds any other nodes directly 
+            connected to it.
+        @test Building::TestGraphBuilder - TestEvaluateGraphNodeConnections
+        @param graphNode the starting GraphNode*
+        @return void
+    */
     void GraphBuilder::EvaluateGraphNodeConnections(GraphNode* graphNode)
     {
         GraphPosition graphPosition = graphNode->GetPosition();
@@ -171,6 +188,14 @@ namespace Building {
         }
     }
 
+    /*
+        TraverseForNewGraphNode takes a graphNode and finds any other nodes directly 
+            connected to it.
+        @test Building::TestGraphBuilder - TestTraverseForNewGraphNode
+        @param rootGraphNode the starting GraphNode*
+        @param graphDirection the direction to move 
+        @return void
+    */
     void GraphBuilder::TraverseForNewGraphNode(GraphNode& rootGraphNode, const GraphDirection& graphDirection)
     {
         GraphPosition positionForEvaluation = rootGraphNode.GetPosition();
