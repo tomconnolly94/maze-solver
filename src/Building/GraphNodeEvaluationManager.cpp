@@ -16,10 +16,7 @@ namespace Building {
         
         GraphNode* graphNode = graphNodesToBeEvaluated.front();
         graphNodesToBeEvaluated.pop();
-        return graphNode;
-        
-
-        
+        return graphNode;        
     }
 
     void GraphNodeEvaluationManager::AddGraphNode(GraphNode* graphNode)

@@ -67,7 +67,7 @@ namespace Building {
             }
             else
             {
-                GraphPosition GraphPosition{0, _pixelMazeXPosition};
+                GraphPosition GraphPosition{_pixelMazeXPosition, 0};
                 CreateNewGraphNode(nullptr, GraphPosition, 0, Up);
                 ++_pixelMazeXPosition;
                 return true;
@@ -173,18 +173,17 @@ namespace Building {
     void GraphBuilder::EvaluateGraphNodeConnections(GraphNode* graphNode)
     {
         GraphPosition graphPosition = graphNode->GetPosition();
-        std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(graphPosition.second, graphPosition.first);
+        std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(graphPosition.first, graphPosition.second);
 
         auto nodeConnection = nodeConnections.begin();
         while (nodeConnection != nodeConnections.end()) 
         {
             GraphDirection graphDirection = nodeConnection->first;
 
+            ++nodeConnection;
             //skip the direction of the node parent
             if(graphDirection == graphNode->GetDirectionOfParent()) continue;
             TraverseForNewGraphNode(*graphNode, graphDirection);
-
-            ++nodeConnection;
         }
     }
 

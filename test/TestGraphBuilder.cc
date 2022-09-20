@@ -62,7 +62,7 @@ namespace Building
 		bool result = graphBuilder->ScanPixelMazeForStartNode();
 
 		// expected values
-		GraphPosition expectedGraphPosition{0, 1};
+		GraphPosition expectedGraphPosition{1, 0};
 
 		// assert post conditions
 		EXPECT_EQ(1, graphBuilder->graphNodes.size());
@@ -82,8 +82,8 @@ namespace Building
 		GraphNode* startNode = graphBuilder->BuildGraph();
 
 		// expected values
-		GraphPosition expectedGraphNode1Position{0, 1};
-		GraphPosition expectedGraphNode2Position{4, 1};
+		GraphPosition expectedGraphNode1Position{1, 0};
+		GraphPosition expectedGraphNode2Position{1, 4};
 
 		// assert post conditions
 		EXPECT_EQ(2, graphBuilder->graphNodes.size());
