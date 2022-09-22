@@ -30,7 +30,7 @@ namespace Building {
         std::map<GraphDirection, GraphPosition> directionMap{};
         GraphPosition graphRootPosition{xPosition, yPosition};
 
-        for ( int graphDirectionIndex = Up; graphDirectionIndex != Right; ++graphDirectionIndex )
+        for ( int graphDirectionIndex = Up; graphDirectionIndex <= Right; ++graphDirectionIndex )
         {
             GraphDirection graphDirection = static_cast<GraphDirection>(graphDirectionIndex);
             GraphPosition graphPosition;

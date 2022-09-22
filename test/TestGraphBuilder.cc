@@ -17,9 +17,16 @@ namespace Building
 		void SetUp() override {
 
     		BaseTest::SetUp();
-			std::vector<std::vector<bool>> twoDimVector(5, { 0, 1, 0, 0, 0 });
+			//std::vector<std::vector<bool>> maze(5, { 0, 1, 0, 0, 0 });
+			std::vector<std::vector<bool>> maze{ 
+				{ 0, 1, 0, 0, 0 },
+				{ 0, 1, 1, 0, 0 },
+				{ 0, 0, 1, 0, 0 },
+				{ 0, 0, 1, 1, 1 },
+				{ 0, 0, 0, 0, 1 },
+			};
 
-			graphBuilder = new Building::GraphBuilder(twoDimVector);
+			graphBuilder = new Building::GraphBuilder(maze);
 		}
 
 		void TearDown() override {
@@ -32,7 +39,7 @@ namespace Building
 	TEST_F(TestGraphBuilder, TestEvaluatePositionConnections) 
 	{
 		// set up
-		GraphPosition graphPosition {1,2};
+		GraphPosition graphPosition {1,1};
 
 		// assert pre-conditions
 		
@@ -40,13 +47,13 @@ namespace Building
 		std::map<GraphDirection, GraphPosition> positionConnections = graphBuilder->EvaluatePositionConnections(graphPosition.first, graphPosition.second);
 
 		// expected values
-		GraphPosition expectedPositionUp {1,1};
-		GraphPosition expectedPositionDown {1,3};
+		GraphPosition expectedPositionUp {1,0};
+		GraphPosition expectedPositionRight {2,1};
 
 		// assert post conditions
 		EXPECT_EQ(2, positionConnections.size());
 		EXPECT_EQ(expectedPositionUp, positionConnections[Up]);
-		EXPECT_EQ(expectedPositionDown, positionConnections[Down]);
+		EXPECT_EQ(expectedPositionRight, positionConnections[Right]);
 	}
 
 	TEST_F(TestGraphBuilder, TestScanPixelMazeForNewGraphNode) 
@@ -83,13 +90,21 @@ namespace Building
 
 		// expected values
 		GraphPosition expectedGraphNode1Position{1, 0};
-		GraphPosition expectedGraphNode2Position{1, 4};
+		GraphPosition expectedGraphNode2Position{1, 1};
+		GraphPosition expectedGraphNode3Position{2, 1};
+		GraphPosition expectedGraphNode4Position{2, 3};
+		GraphPosition expectedGraphNode5Position{4, 3};
+		GraphPosition expectedGraphNode6Position{4, 4};
 
 		// assert post conditions
-		EXPECT_EQ(2, graphBuilder->graphNodes.size());
+		EXPECT_EQ(6, graphBuilder->graphNodes.size());
 		EXPECT_EQ(false, graphBuilder->graphNodeEvaluationManager.IsNotEmpty());
 		EXPECT_EQ(expectedGraphNode1Position, startNode->GetPosition());
 		EXPECT_EQ(expectedGraphNode2Position, graphBuilder->graphNodes[1]->GetPosition());
+		EXPECT_EQ(expectedGraphNode3Position, graphBuilder->graphNodes[2]->GetPosition());
+		EXPECT_EQ(expectedGraphNode4Position, graphBuilder->graphNodes[3]->GetPosition());
+		EXPECT_EQ(expectedGraphNode5Position, graphBuilder->graphNodes[4]->GetPosition());
+		EXPECT_EQ(expectedGraphNode6Position, graphBuilder->graphNodes[5]->GetPosition());
 	}
 	
 
@@ -172,7 +187,7 @@ namespace Building
 		auto graphNode2 = graphBuilder->graphNodes[1];
 		auto graphNode1Position = graphNode1->GetPosition();
 		auto graphNode2Position = graphNode2->GetPosition();
-		GraphPosition expectedGraphNode2Position { 1, 4 };
+		GraphPosition expectedGraphNode2Position { 1, 1 };
 
 		// assert post conditions
 		EXPECT_EQ(true, graphBuilder->graphNodeEvaluationManager.IsNotEmpty());
@@ -204,7 +219,7 @@ namespace Building
 		auto graphNode2 = graphBuilder->graphNodes[1];
 		auto graphNode1Position = graphNode1->GetPosition();
 		auto graphNode2Position = graphNode2->GetPosition();
-		GraphPosition expectedGraphNode2Position { 1, 4 };
+		GraphPosition expectedGraphNode2Position { 1, 1 };
 		GraphConnection* graphConnection = graphNode1->GetConnections()[0];
 
 		// assert post conditions
@@ -213,7 +228,7 @@ namespace Building
 		EXPECT_EQ(1, graphNode2->GetConnections().size());
 		EXPECT_EQ(graphPosition, graphNode1Position);
 		EXPECT_EQ(expectedGraphNode2Position, graphNode2Position);
-		EXPECT_EQ(4, graphConnection->GetConnectionLength());
+		EXPECT_EQ(1, graphConnection->GetConnectionLength());
 		EXPECT_EQ(Up, graphNode2->GetDirectionOfParent());
 	}
 }
