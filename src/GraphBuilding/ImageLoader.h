@@ -4,12 +4,14 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 class ImageLoader {
 private:
-    std::string imagePath = "";
+    string imagePath = "";
 public:
-    ImageLoader(std::string imagePath);
-    std::vector<std::vector<bool>> ReadPixels();
+    ImageLoader(string imagePath);
+    vector<vector<bool>> ReadPixels();
 };
 
 #endif

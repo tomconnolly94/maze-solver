@@ -1,14 +1,20 @@
 #ifndef GRAPHDIRECTION_H
 #define GRAPHDIRECTION_H
 
-enum GraphDirection{
-    Up,
-    Down,
-    Left,
-    Right
-};
+#include <vector>
 
-GraphDirection GetOppositeDirection(GraphDirection direction);
-std::vector<GraphDirection> GetPerpendicularDirections(GraphDirection direction);
+using namespace std;
 
+namespace Models {
+    
+    enum GraphDirection{
+        Up,
+        Down,
+        Left,
+        Right
+    };
+
+    GraphDirection GetOppositeDirection(GraphDirection direction);
+    vector<GraphDirection> GetPerpendicularDirections(GraphDirection direction);
+}
 #endif

@@ -2,26 +2,29 @@
 
 #include <GraphNode.h>
 
+namespace Models {
 
-GraphNode::GraphNode(std::pair<int, int> position, GraphDirection directionOfParent){
-    _position = position;
-    _directionOfParent = directionOfParent;
-}
+    GraphNode::GraphNode(pair<int, int> position, GraphDirection directionOfParent){
+        _position = position;
+        _directionOfParent = directionOfParent;
+    }
 
-std::vector<GraphConnection*> GraphNode::GetConnections()
-{
-    return _connections;
-}
+    vector<pair<GraphNode*, int>> GraphNode::GetConnections()
+    {
+        return _connections;
+    }
 
-void GraphNode::AddConnection(GraphConnection* connection)
-{
-    _connections.push_back(connection);
-}
+    void GraphNode::AddConnection(GraphNode* graphNode, int connectionLength)
+    {
+        pair<GraphNode*, int> graphNodeConnection{graphNode, connectionLength};
+        _connections.push_back(graphNodeConnection);
+    }
 
-GraphPosition GraphNode::GetPosition(){
-    return _position;
-}
+    GraphPosition GraphNode::GetPosition(){
+        return _position;
+    }
 
-GraphDirection GraphNode::GetDirectionOfParent(){
-    return _directionOfParent;
+    GraphDirection GraphNode::GetDirectionOfParent(){
+        return _directionOfParent;
+    }
 }

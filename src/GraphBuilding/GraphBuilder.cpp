@@ -3,20 +3,20 @@
 
 #include <GraphBuilder.h>
 
-namespace Building {
+namespace GraphBuilding {
 
     /*
         Constructor for GraphBuilder.
         @param pixelMaze 2D vector representing the maze for analysis.
     */
-    GraphBuilder::GraphBuilder(std::vector<std::vector<bool>> pixelMaze) : 
+    GraphBuilder::GraphBuilder(vector<vector<bool>> pixelMaze) : 
         graphNodes{},
         graphNodeEvaluationManager{pixelMaze}
     {
         _pixelMaze = pixelMaze;
         directionMap = {{Up, -1}, {Down, 1}, {Left, -1}, {Right, 1}};
     }
-    
+
     /*
         EvaluatePositionConnections takes a pixelMaze position and evaluates its immediate surroundings for positions of that 
             should be included in the graph, not necessarily as GraphNodes.
@@ -25,9 +25,9 @@ namespace Building {
         @param yPosition position on the y axis.
         @return map of each position that can be considered part of the graph with the direction from the input position as the map key.
     */
-    std::map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnections(const int& xPosition, const int& yPosition)
+    map<GraphDirection, GraphPosition> GraphBuilder::EvaluatePositionConnections(const int& xPosition, const int& yPosition)
     {
-        std::map<GraphDirection, GraphPosition> directionMap{};
+        map<GraphDirection, GraphPosition> directionMap{};
         GraphPosition graphRootPosition{xPosition, yPosition};
 
         for ( int graphDirectionIndex = Up; graphDirectionIndex <= Right; ++graphDirectionIndex )
@@ -37,8 +37,8 @@ namespace Building {
             try{
                 graphPosition = GetNewPosition(graphRootPosition, graphDirection);
             }
-            catch (const std::invalid_argument& exception){
-                std::cerr << exception.what() << std::endl;
+            catch (const invalid_argument& exception){
+                cerr << exception.what() << endl;
                 continue;
             }
 
@@ -132,9 +132,9 @@ namespace Building {
             return graphPosition;
         }
 
-        std::stringstream errorString;
+        stringstream errorString;
         errorString << "GetNewPosition has invalid new position. x: " << graphPosition.first << ", y: " << graphPosition.second;
-        throw std::invalid_argument(errorString.str());
+        throw invalid_argument(errorString.str());
     }
 
     /*
@@ -152,15 +152,12 @@ namespace Building {
         GraphNode* graphNode = new GraphNode(graphNodePosition, directionOfParent);
 
         graphNodes.push_back(graphNode);
-        GraphConnection* graphConnection = new GraphConnection(distanceFromParent);
 
-        graphNode->AddConnection(graphConnection);
-        //graphNodesToBeEvaluated[graphNode] = 1;
+        graphNode->AddConnection(parentNode, distanceFromParent);
         graphNodeEvaluationManager.AddGraphNode(graphNode);
 
         if(parentNode == nullptr) return;
-        
-        parentNode->AddConnection(graphConnection);
+        parentNode->AddConnection(graphNode, distanceFromParent);
     }
 
     /*
@@ -173,7 +170,7 @@ namespace Building {
     void GraphBuilder::EvaluateGraphNodeConnections(GraphNode* graphNode)
     {
         GraphPosition graphPosition = graphNode->GetPosition();
-        std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(graphPosition.first, graphPosition.second);
+        map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(graphPosition.first, graphPosition.second);
 
         auto nodeConnection = nodeConnections.begin();
         while (nodeConnection != nodeConnections.end()) 
@@ -206,7 +203,7 @@ namespace Building {
             ++stepsTakenFromParent;
 
             //evaluate surrounding locations
-            std::map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(positionForEvaluation.first, positionForEvaluation.second);
+            map<GraphDirection, GraphPosition> nodeConnections = EvaluatePositionConnections(positionForEvaluation.first, positionForEvaluation.second);
 
             // this position is a node if the next position for evaluation is not a valid path
             if(nodeConnections.find(graphDirection) == nodeConnections.end())
@@ -215,7 +212,7 @@ namespace Building {
                 return;
             }
 
-            std::vector<GraphDirection> perpendicularDirections = GetPerpendicularDirections(graphDirection);
+            vector<GraphDirection> perpendicularDirections = GetPerpendicularDirections(graphDirection);
 
             // this position is a node if there are perpendicular connections
             for (const GraphDirection& perpendicularDirection : perpendicularDirections)

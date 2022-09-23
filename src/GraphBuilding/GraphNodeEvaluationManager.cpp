@@ -1,9 +1,9 @@
 
 #include "GraphNodeEvaluationManager.h"
 
-namespace Building {
+namespace GraphBuilding {
     
-    GraphNodeEvaluationManager::GraphNodeEvaluationManager(std::vector<std::vector<bool>> pixelMaze) : 
+    GraphNodeEvaluationManager::GraphNodeEvaluationManager(vector<vector<bool>> pixelMaze) : 
         _pixelMazeXPosition(0), 
         _pixelMazeYPosition(0),
         graphNodesToBeEvaluated{},

@@ -4,17 +4,20 @@
 #include <queue>
 #include <GraphNode.h>
 
-namespace Building {
+using namespace std;
+using namespace Models;
+
+namespace GraphBuilding {
 
     class GraphNodeEvaluationManager {
 
     private:
         int _pixelMazeXPosition;
         int _pixelMazeYPosition;
-        std::vector<std::vector<bool>> _pixelMaze;
-        std::queue<GraphNode*> graphNodesToBeEvaluated;
+        vector<vector<bool>> _pixelMaze;
+        queue<GraphNode*> graphNodesToBeEvaluated;
     public:
-        GraphNodeEvaluationManager(std::vector<std::vector<bool>> pixelMaze);
+        GraphNodeEvaluationManager(vector<vector<bool>> pixelMaze);
         GraphNode* GetNextGraphNodeForEvaluation();
         void AddGraphNode(GraphNode* graphNode);
         bool IsNotEmpty();

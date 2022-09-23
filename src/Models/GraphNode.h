@@ -1,29 +1,31 @@
 #ifndef GRAPHNODE_H
 #define GRAPHNODE_H
 
-#include <string>
 #include <vector>
-#include <map>
 #include <tuple>
 
 #include <GraphDirection.h>
 #include <GraphPosition.h>
-#include <GraphConnection.h>
 
-class GraphNode {
-private:
-    // members
-    std::vector<GraphConnection*> _connections;
-    GraphPosition _position;
-    GraphDirection _directionOfParent;
-public:
-    GraphNode(GraphPosition position, GraphDirection directionOfParent);
+namespace Models {
 
-    // functions
-    std::vector<GraphConnection*> GetConnections();
-    void AddConnection(GraphConnection* connection);
-    GraphPosition GetPosition();
-    GraphDirection GetDirectionOfParent();
-};
+    //typedef pair<GraphNode*, int> GraphNodeConnection;
+
+    class GraphNode {
+    private:
+        // members
+        vector<pair<GraphNode*, int>> _connections;
+        GraphPosition _position;
+        GraphDirection _directionOfParent;
+    public:
+        GraphNode(GraphPosition position, GraphDirection directionOfParent);
+
+        // functions
+        vector<pair<GraphNode*, int>> GetConnections();
+        void AddConnection(GraphNode* graphNode, int connectionLength);
+        GraphPosition GetPosition();
+        GraphDirection GetDirectionOfParent();
+    };
+}
 
 #endif

@@ -4,19 +4,20 @@
 
 #include <stdio.h>
 
+using namespace std;
+
 int main()
 {
-    std::string filename = "resources/input/maze-10x10.png";
+    string filename = "resources/input/maze-10x10.png";
     ImageLoader imageLoader(filename);
-    std::vector<std::vector<bool>> mazeArray = imageLoader.ReadPixels();
+    vector<vector<bool>> mazeArray = imageLoader.ReadPixels();
 
 
     for(int i = 0; i < mazeArray.size(); i++){
         for(int j = 0; j < mazeArray[i].size(); j++)
         {
-            std::cout << mazeArray[i][j] << " ";
+            cout << mazeArray[i][j] << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 }
-

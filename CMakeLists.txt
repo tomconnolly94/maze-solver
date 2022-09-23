@@ -60,15 +60,14 @@ if("${UNIT_TEST}" STREQUAL "true")
     # find_package(GTest REQUIRED)
     include(GoogleTest)
 
-    FILE(GLOB cpp_test_files 
+    FILE(GLOB cpp_test_files
         test/BaseTest.cc
         test/TestGraphBuilder.cc
-        src/Building/GraphBuilder.cpp
+        src/GraphBuilding/GraphBuilder.cpp
         src/Models/GraphNode.cpp
         src/Models/GraphPosition.cpp
         src/Models/GraphDirection.cpp
-        src/Models/GraphConnection.cpp
-        src/Building/GraphNodeEvaluationManager.cpp
+        src/GraphBuilding/GraphNodeEvaluationManager.cpp
     ) # for source
 
     add_executable(
