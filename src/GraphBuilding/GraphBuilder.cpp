@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <GraphBuilder.h>
+#include <GraphBuilding/GraphBuilder.h>
 
 namespace GraphBuilding {
 

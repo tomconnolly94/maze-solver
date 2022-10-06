@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 set(CMAKE_CXX_STANDARD 14)
 
+include(CMakePrintHelpers)
+
 # macro to list sub directories of a given directory
 MACRO(SUBDIRLIST result curdir)
     FILE(GLOB children ${curdir}/*) # This was changed
@@ -10,15 +12,12 @@ MACRO(SUBDIRLIST result curdir)
             LIST(APPEND dirlist ${child})
         ENDIF()
     ENDFOREACH()
-    SET(${result} ${dirlist})
+    LIST(APPEND ${result} ${dirlist})
 ENDMACRO()
-
-
 
 # declare project
 project( MazeSolver )
 
-# include print function, example use: `cmake_print_variables(<var-to-print>)`
 include(CMakePrintHelpers)
 
 # include opencv
@@ -28,21 +27,32 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # include header file directories
 SUBDIRLIST(SUBDIRS src)
+
+# go one level deeper in each SUBDIR to find nested directories
+FOREACH(SUBDIR ${SUBDIRS})
+    FILE(GLOB SUBDIRCHILDREN ${SUBDIR}/*)
+    FOREACH(SUBDIRCHILD ${SUBDIRCHILDREN})
+        IF(IS_DIRECTORY ${SUBDIRCHILD})
+            LIST(APPEND SUBDIRS ${SUBDIRCHILD})
+        ENDIF()
+    ENDFOREACH()
+ENDFOREACH()
+
+cmake_print_variables(${SUBDIRS})
+
 include_directories(src ${SUBDIRS})
 
 # include source files
-FILE(GLOB cpp_files src/*.cpp src/*/*.cpp) # for source
+FILE(GLOB cpp_files src/*.cpp src/*/*.cpp src/*/*/*.cpp) # for source
 
 # compile and link
 add_executable( MazeSolver ${cpp_files} )
 target_link_libraries( MazeSolver ${OpenCV_LIBS} )
 
 
-
 #################
 # testing config
 #################
-
 
 if("${UNIT_TEST}" STREQUAL "true")
 
@@ -60,21 +70,15 @@ if("${UNIT_TEST}" STREQUAL "true")
     # find_package(GTest REQUIRED)
     include(GoogleTest)
 
-    FILE(GLOB cpp_test_files
-        test/BaseTest.cc
-        test/TestGraphBuilder.cc
-        src/GraphBuilding/GraphBuilder.cpp
-        src/Models/GraphNode.cpp
-        src/Models/GraphPosition.cpp
-        src/Models/GraphDirection.cpp
-        src/GraphBuilding/GraphNodeEvaluationManager.cpp
-    ) # for source
+    FILE(GLOB cpp_test_files test/*.cpp ) # for source
 
     add_executable(
         MazeSolverTest
         ${cpp_test_files}
-        # ${cpp_files}
+        ${cpp_files}
     )
+
+    target_link_libraries( MazeSolverTest ${OpenCV_LIBS} )
 
     target_compile_definitions(MazeSolverTest PRIVATE UNIT_TEST)
 
