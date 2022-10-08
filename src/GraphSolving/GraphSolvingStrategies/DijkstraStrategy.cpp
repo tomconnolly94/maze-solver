@@ -16,7 +16,18 @@ namespace GraphSolvingStrategies {
     /*
         GetShortestPath takes a GraphNode* and returns a GraphNodePint.
     */
-    GraphNode* DijkstraStrategy::GetShortestPath(GraphNode* startNode)
+    vector<GraphPosition> DijkstraStrategy::GetShortestPath(GraphNode* startNode)
+    {
+        PopulatePathDataList(startNode);
+        
+        // get a list of positions of the shortest path through the graph
+        
+    }
+
+    /*
+        GetShortestPath takes a GraphNode* and returns a GraphNodePint.
+    */
+    void DijkstraStrategy::PopulatePathDataList(GraphNode* startNode)
     {
         // visit the first GraphNode*
         VisitNode(GraphNodePathData(startNode, 0, nullptr));
@@ -24,12 +35,10 @@ namespace GraphSolvingStrategies {
         while(true)
         {
             GraphNodePathData nextNodePathData = GetNextNodeToVisit();
-            if(nextNodePathData.distanceFromParent == 0) break;
+            if(nextNodePathData.distanceFromParent == 0) return;
             VisitNode(nextNodePathData);
         }
-        return nullptr; //return list of positions of the shortest path
     }
-
     /*
         GetNextNodeToVisit takes a GraphNode* and returns a pair<GraphNode*, int> representing the 
             next GraphNode* to be visited and the distance from its parent.
@@ -51,8 +60,8 @@ namespace GraphSolvingStrategies {
     }
 
     /*
-        VisitNode takes a GraphNode* and returns a pair<GraphNode*, int> representing the 
-            next GraphNode* to be visited and the distance from its parent.
+        VisitNode takes a GraphNodePathData and analyses the connections of
+        the contained GraphNode adding them to the path data store.
         @param GraphNodePathData
     */
     void DijkstraStrategy::VisitNode(GraphNodePathData nextNodePathData)

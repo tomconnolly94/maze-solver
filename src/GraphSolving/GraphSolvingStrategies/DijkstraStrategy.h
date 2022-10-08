@@ -39,15 +39,19 @@ namespace GraphSolvingStrategies {
             // code to expose this classes private members in a unit test environment
             #include "gtest/gtest_prod.h"
             //friend class TestGraphBuilder;
-            FRIEND_TEST(TestDijkstraStrategy, TestGetNextNodeToVisit);
+            FRIEND_TEST(TestDijkstraStrategy, TestGetNextNodeToVisitSimple);
+            FRIEND_TEST(TestDijkstraStrategy, TestGetNextNodeToVisitComplex);
+            FRIEND_TEST(TestDijkstraStrategy, TestVisitNode);
+            FRIEND_TEST(TestDijkstraStrategy, TestGetShortestPath);
         #endif
         vector<GraphNodePathData> _graphNodePathDataList;
         vector<GraphNode*> _visitedNodes;
         GraphNodePathData GetNextNodeToVisit();
         void VisitNode(GraphNodePathData nextNodePathData);
+        void PopulatePathDataList(GraphNode* startNode);
     public:
         DijkstraStrategy();
-        GraphNode* GetShortestPath(GraphNode* startNode);
+        vector<GraphPosition> GetShortestPath(GraphNode* startNode);
     };
 }
 
