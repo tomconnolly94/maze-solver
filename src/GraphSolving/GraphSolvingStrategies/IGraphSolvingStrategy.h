@@ -5,9 +5,9 @@
 
 using namespace Models;
 
-namespace MazeSolvingStrategies {
+namespace GraphSolvingStrategies {
 
-    class IMazeSolvingStrategy
+    class IGraphSolvingStrategy
     {
     public:
         virtual GraphNode* GetShortestPath(GraphNode* startNode) = 0;

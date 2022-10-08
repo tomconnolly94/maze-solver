@@ -18,8 +18,6 @@ ENDMACRO()
 # declare project
 project( MazeSolver )
 
-include(CMakePrintHelpers)
-
 # include opencv
 set("OpenCV_DIR" "/usr/lib/x86_64-linux-gnu/cmake/opencv4")
 find_package( OpenCV REQUIRED )
@@ -70,23 +68,27 @@ if("${UNIT_TEST}" STREQUAL "true")
     # find_package(GTest REQUIRED)
     include(GoogleTest)
 
-    FILE(GLOB cpp_test_files test/*.cpp ) # for source
+    FILE(GLOB cpp_test_files test/*.cc ) # for source
+
+
+    # cmake_print_variables(${cpp_test_files})
+    # cmake_print_variables(${cpp_files})
 
     add_executable(
         MazeSolverTest
-        ${cpp_test_files}
         ${cpp_files}
+        ${cpp_test_files}
     )
-
-    target_link_libraries( MazeSolverTest ${OpenCV_LIBS} )
 
     target_compile_definitions(MazeSolverTest PRIVATE UNIT_TEST)
 
     target_link_libraries(
         MazeSolverTest
+        PRIVATE 
+        GTest::gtest 
         GTest::gtest_main
-        # ${OpenCV_LIBS}
-    )
+        ${OpenCV_LIBS}
+    )   
 
     gtest_discover_tests(MazeSolverTest)
     
