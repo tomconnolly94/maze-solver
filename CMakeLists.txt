@@ -41,10 +41,11 @@ cmake_print_variables(${SUBDIRS})
 include_directories(src ${SUBDIRS})
 
 # include source files
-FILE(GLOB cpp_files src/*.cpp src/*/*.cpp src/*/*/*.cpp) # for source
+FILE(GLOB cpp_files src/*/*.cpp src/*/*/*.cpp) # for source
+FILE(GLOB cpp_main_files  src/main.cpp) # for source
 
 # compile and link
-add_executable( MazeSolver ${cpp_files} )
+add_executable( MazeSolver ${cpp_files} ${cpp_main_files} )
 target_link_libraries( MazeSolver ${OpenCV_LIBS} )
 
 
@@ -70,24 +71,22 @@ if("${UNIT_TEST}" STREQUAL "true")
 
     FILE(GLOB cpp_test_files test/*.cc ) # for source
 
-
-    # cmake_print_variables(${cpp_test_files})
     # cmake_print_variables(${cpp_files})
 
     add_executable(
         MazeSolverTest
-        ${cpp_files}
         ${cpp_test_files}
+        ${cpp_files}
     )
 
     target_compile_definitions(MazeSolverTest PRIVATE UNIT_TEST)
 
     target_link_libraries(
         MazeSolverTest
-        PRIVATE 
-        GTest::gtest 
+        # PRIVATE 
+        # GTest::gtest 
         GTest::gtest_main
-        ${OpenCV_LIBS}
+        # ${OpenCV_LIBS}
     )   
 
     gtest_discover_tests(MazeSolverTest)
