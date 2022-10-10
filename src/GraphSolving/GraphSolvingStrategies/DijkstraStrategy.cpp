@@ -16,12 +16,32 @@ namespace GraphSolvingStrategies {
     /*
         GetShortestPath takes a GraphNode* and returns a GraphNodePint.
     */
-    vector<GraphPosition> DijkstraStrategy::GetShortestPath(GraphNode* startNode)
+    vector<GraphPosition> DijkstraStrategy::GetShortestPath(GraphNode* startNode, GraphNode* endNode)
     {
         PopulatePathDataList(startNode);
-        
-        // get a list of positions of the shortest path through the graph
-        
+
+        GraphNodePathData currentNodePathData = GetNodePathData(currentNodePathData.parentGraphNode);
+        vector<GraphPosition> positionList{};
+
+        while(currentNodePathData.parentGraphNode != nullptr)
+        {
+            positionList.push_back(currentNodePathData.graphNode->GetPosition());
+            currentNodePathData = GetNodePathData(currentNodePathData.parentGraphNode);
+        }
+
+        positionList.push_back(startNode->GetPosition());
+
+        return positionList;
+    }
+
+    GraphNodePathData DijkstraStrategy::GetNodePathData(GraphNode* graphNode)
+    {
+        for(auto pathData : _graphNodePathDataList)
+        {
+            if(pathData.graphNode == graphNode)
+                return pathData;
+        }
+        return GraphNodePathData();
     }
 
     /*
@@ -30,7 +50,9 @@ namespace GraphSolvingStrategies {
     void DijkstraStrategy::PopulatePathDataList(GraphNode* startNode)
     {
         // visit the first GraphNode*
-        VisitNode(GraphNodePathData(startNode, 0, nullptr));
+        GraphNodePathData startNodePathData = GraphNodePathData(startNode, 0, nullptr);
+        _graphNodePathDataList.push_back(startNodePathData);
+        VisitNode(startNodePathData);
 
         while(true)
         {
@@ -66,9 +88,6 @@ namespace GraphSolvingStrategies {
     */
     void DijkstraStrategy::VisitNode(GraphNodePathData nextNodePathData)
     {
-        // find a way to avoid adding duplicates
-        _graphNodePathDataList.push_back(nextNodePathData);
-
         vector<pair<GraphNode*, int>> connectedGraphNodes = nextNodePathData.graphNode->GetConnections();
 
         for(auto graphNodeAndDistancePair : connectedGraphNodes)

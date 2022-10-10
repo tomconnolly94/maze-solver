@@ -14,7 +14,7 @@ namespace GraphSolving {
     public:
         GraphSolver(GraphNode* startNode);
         ~GraphSolver();
-        GraphNode* SolveGraph();
+        vector<GraphPosition> SolveGraph();
     };
 }
 

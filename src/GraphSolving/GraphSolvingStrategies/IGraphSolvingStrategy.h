@@ -10,7 +10,7 @@ namespace GraphSolvingStrategies {
     class IGraphSolvingStrategy
     {
     public:
-        virtual vector<GraphPosition> GetShortestPath(GraphNode* startNode) = 0;
+        virtual vector<GraphPosition> GetShortestPath(GraphNode* startNode, GraphNode* endNode) = 0;
     };
 }
 #endif

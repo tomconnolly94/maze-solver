@@ -23,9 +23,9 @@ namespace GraphSolving
 
     }
 
-    GraphNode* GraphSolver::SolveGraph()
+    vector<GraphPosition> GraphSolver::SolveGraph()
     {
-        return _graphSolvingStrategy->GetShortestPath(_startNode);
+        return _graphSolvingStrategy->GetShortestPath(_startNode, nullptr);
     }
 
 }
