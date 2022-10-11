@@ -2,6 +2,7 @@
 #define MAZESOLVER_H
 
 #include "IGraphSolvingStrategy.h"
+#include "GraphEntryPoints.h"
 
 using namespace GraphSolvingStrategies;
 
@@ -10,9 +11,9 @@ namespace GraphSolving {
     class GraphSolver {
     private:
         IGraphSolvingStrategy* _graphSolvingStrategy;
-        GraphNode* _startNode;
+        GraphEntryPoints _graphEntryPoints;
     public:
-        GraphSolver(GraphNode* startNode);
+        GraphSolver(GraphEntryPoints graphEntryPoints);
         ~GraphSolver();
         vector<GraphPosition> SolveGraph();
     };

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./debug-build.sh
-cd ../build
+./build-debug.sh
+cd ../build/bin
 ./MazeSolver
 cd -

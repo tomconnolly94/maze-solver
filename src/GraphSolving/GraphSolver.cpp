@@ -7,25 +7,24 @@ namespace GraphSolving
     /*
         Constructor for DijkstraStrategy.
     */
-    GraphSolver::GraphSolver(GraphNode* startNode)
+    GraphSolver::GraphSolver(GraphEntryPoints graphEntryPoints)
     {
         _graphSolvingStrategy = new DijkstraStrategy();
-        _startNode = startNode;
+        _graphEntryPoints = graphEntryPoints;
 
     }
     /*
-        Constructor for DijkstraStrategy.
+        Destructor for DijkstraStrategy.
     */
     GraphSolver::~GraphSolver()
     {
         delete _graphSolvingStrategy;
-        delete _startNode;
 
     }
 
     vector<GraphPosition> GraphSolver::SolveGraph()
     {
-        return _graphSolvingStrategy->GetShortestPath(_startNode, nullptr);
+        return _graphSolvingStrategy->GetShortestPath(_graphEntryPoints.startNode, _graphEntryPoints.endNode);
     }
 
 }

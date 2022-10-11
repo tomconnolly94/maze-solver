@@ -14,13 +14,14 @@ namespace GraphSolvingStrategies {
     DijkstraStrategy::DijkstraStrategy() : IGraphSolvingStrategy(){}
 
     /*
-        GetShortestPath takes a GraphNode* and returns a GraphNodePint.
+        GetShortestPath takes a GraphNode* and returns a list of positions of graphNodes
+            mapping the startNode to the endNode
     */
     vector<GraphPosition> DijkstraStrategy::GetShortestPath(GraphNode* startNode, GraphNode* endNode)
     {
         PopulatePathDataList(startNode);
 
-        GraphNodePathData currentNodePathData = GetNodePathData(currentNodePathData.parentGraphNode);
+        GraphNodePathData currentNodePathData = GetNodePathData(endNode);
         vector<GraphPosition> positionList{};
 
         while(currentNodePathData.parentGraphNode != nullptr)
@@ -30,6 +31,7 @@ namespace GraphSolvingStrategies {
         }
 
         positionList.push_back(startNode->GetPosition());
+        std::reverse(positionList.begin(), positionList.end());
 
         return positionList;
     }

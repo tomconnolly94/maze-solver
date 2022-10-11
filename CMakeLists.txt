@@ -3,6 +3,13 @@ set(CMAKE_CXX_STANDARD 14)
 
 include(CMakePrintHelpers)
 
+
+set("CMAKE_BINARY_DIR" "/home/tom/projects/maze-solver/build")
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # macro to list sub directories of a given directory
 MACRO(SUBDIRLIST result curdir)
     FILE(GLOB children ${curdir}/*) # This was changed
@@ -17,6 +24,9 @@ ENDMACRO()
 
 # declare project
 project( MazeSolver )
+
+get_test_property(MazeSolver WORKING_DIRECTORY test_dir)
+message("My test's working directory: ${test_dir}")
 
 # include opencv
 set("OpenCV_DIR" "/usr/lib/x86_64-linux-gnu/cmake/opencv4")
@@ -86,7 +96,7 @@ if("${UNIT_TEST}" STREQUAL "true")
         # PRIVATE 
         # GTest::gtest 
         GTest::gtest_main
-        # ${OpenCV_LIBS}
+        ${OpenCV_LIBS}
     )   
 
     gtest_discover_tests(MazeSolverTest)

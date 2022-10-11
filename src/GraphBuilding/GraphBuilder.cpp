@@ -15,6 +15,7 @@ namespace GraphBuilding {
     {
         _pixelMaze = pixelMaze;
         directionMap = {{Up, -1}, {Down, 1}, {Left, -1}, {Right, 1}};
+        _pixelMazeXPosition = 0;
     }
 
     /*
@@ -81,18 +82,22 @@ namespace GraphBuilding {
         @test Building::TestGraphBuilder - TestBuildGraph
         @return GraphNode* representing the start position.
     */
-    GraphNode* GraphBuilder::BuildGraph()
+    GraphEntryPoints GraphBuilder::BuildGraph()
     {
-        GraphNode* startNode = nullptr;
+        _pixelMazeXPosition = 0;
+        GraphEntryPoints graphEntryPoints{};
         ScanPixelMazeForStartNode();
 
         while(graphNodeEvaluationManager.IsNotEmpty())
         {
             GraphNode* graphNodeForEvaluation = graphNodeEvaluationManager.GetNextGraphNodeForEvaluation();
-            if(startNode == nullptr) startNode = graphNodeForEvaluation;
+            if(graphEntryPoints.startNode == nullptr) graphEntryPoints.startNode = graphNodeForEvaluation;
             EvaluateGraphNodeConnections(graphNodeForEvaluation);
+            if(graphNodeForEvaluation->GetPosition().second == _pixelMaze.size() - 1)
+                graphEntryPoints.endNode = graphNodeForEvaluation;
         }
-        return startNode;
+
+        return graphEntryPoints;
     }
 
     /*

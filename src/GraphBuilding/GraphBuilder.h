@@ -8,6 +8,7 @@
 #include <GraphNode.h>
 #include <GraphPosition.h>
 #include <GraphNodeEvaluationManager.h>
+#include <GraphEntryPoints.h>
 
 using namespace std;
 using namespace Models;
@@ -47,7 +48,7 @@ namespace GraphBuilding {
 
     public:
         GraphBuilder(vector<vector<bool>> pixelMaze);
-        GraphNode* BuildGraph();
+        GraphEntryPoints BuildGraph();
 
     };
 };

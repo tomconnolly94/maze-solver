@@ -2,7 +2,10 @@
 #define GRAPHPOSITION_H
 
 #include <tuple>
+using namespace std;
 
-typedef pair<int, int> GraphPosition;
-
+namespace Models
+{
+    typedef pair<int, int> GraphPosition;
+}
 #endif
