@@ -5,7 +5,7 @@
 #include "ImageLoader.h"
 #include "GraphBuilder.h"
 #include "GraphNode.h"
-#include "GraphSolver.h"
+#include "PathFinder.h"
 #include "ImageModifier.h"
 
 
@@ -32,8 +32,8 @@ int main()
     GraphBuilder graphBuilder(mazeArray);
     GraphEntryPoints graphEntryPoints = graphBuilder.BuildGraph();
 
-    GraphSolver graphSolver(graphEntryPoints);
-    vector<GraphPosition> positionList = graphSolver.SolveGraph();
+    PathFinder pathFinder(graphEntryPoints);
+    vector<GraphPosition> positionList = pathFinder.FindPath();
 
     ImageModifier imageModifier(filename);
     imageModifier.DrawPathOnImage(positionList);

@@ -8,14 +8,17 @@ using namespace GraphSolvingStrategies;
 
 namespace GraphSolving {
 
-    class GraphSolver {
+    class PathFinder {
     private:
+        // fields
         IGraphSolvingStrategy* _graphSolvingStrategy;
         GraphEntryPoints _graphEntryPoints;
+        // functions
+        vector<GraphPosition> InterpolateBetweenPathNodes(vector<GraphPosition> path);
     public:
-        GraphSolver(GraphEntryPoints graphEntryPoints);
-        ~GraphSolver();
-        vector<GraphPosition> SolveGraph();
+        PathFinder(GraphEntryPoints graphEntryPoints);
+        ~PathFinder();
+        vector<GraphPosition> FindPath();
     };
 }
 
